@@ -2,6 +2,8 @@ import { useState } from "react";
 import Voting from "./Voting";
 import Breeds from "./Breeds";
 import Gallery from "./Gallery";
+import { TabNavForBreeds } from "./Breeds";
+import BreedInfo from "./BreedInfo";
 
 function NavigationPanel() {
   return (
@@ -21,39 +23,17 @@ function NavigationPanel() {
   );
 }
 
-function TabNavForBreeds() {
-  return (
-    <div className="nav-breeds">
-      <select name="breeds" id="" className="sel-breeds">
-        <option value="all">All Breeds</option>
-      </select>
-      <select name="limit_breeds" id="" className="sel-limitB" defaultValue="10">
-        <option value="5">Limit: 5</option>
-        <option value="10">Limit: 10</option>
-        <option value="15">Limit: 15</option>
-        <option value="20">Limit: 20</option>
-      </select>
-      <button className="btn-sort btnS-ZA"></button>
-      <button className="btn-sort btnS-AZ"></button>
-    </div>
-  );
-}
+
 
 function TabContent({ history, onVoteClick, page }) {
   return (
     <div className="tab-content">
-      <div className="tab-nav">
-        <button className="btn-t-back"></button>
-        <div className="tab-title">{page}</div>
-        {page === 'breeds' && (<TabNavForBreeds></TabNavForBreeds>)}
-      </div>
       {page === "voting" && (
         <Voting history={history} onVoteClick={onVoteClick}></Voting>
       )}
-
       {page === "breeds" && <Breeds></Breeds>}
-
       {page === "gallery" && <Gallery></Gallery>}
+      {page === "breed-info" && <BreedInfo></BreedInfo>}
     </div>
   );
 }

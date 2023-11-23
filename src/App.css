@@ -182,10 +182,17 @@ body{
 }
 
 .tab-nav{
-  /* width: 196px; */
+  width: 196px;
   margin: 0 0 20px 0;
   display: flex;
   justify-content: space-between;
+}
+
+.tab-nav-gallery{
+  width: 196px;
+  margin: 0 0 20px 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .btn-t-back{
@@ -212,7 +219,7 @@ body{
 }
 
 .nav-breeds{
-  width: 437px;
+  width: 100%;
   display: flex;
   justify-content: space-between;
 }
@@ -410,4 +417,251 @@ ul{
 li{
   list-style-type: none;
   margin: 0 0 10px 0;
+}
+
+.breeds-content{
+  height: 682px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: scroll;
+  -ms-overflow-style: none;
+  overflow-x: hidden;
+}
+
+.breeds-content::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+.grid-body{
+  display: grid;
+  width: 640px;
+  gap: 20px;
+  grid-auto-rows: 140px;
+  grid-template-columns: repeat(3, 200px);
+  margin: 0 0 14px 0;
+
+}
+
+.grid-item{
+  position: relative;
+  background-color: #8C8C8C;
+  border-radius: 20px;
+}
+
+.grid-item img{
+  object-fit: cover;
+  border-radius: 20px;
+  width: 100%;
+  height: 100%;
+}
+
+.grid-item:hover .gr-i-hover{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  background: rgba(255, 134, 142, 0.6);
+  z-index: 1;
+}
+
+.gr-i-hbtn{
+  visibility: hidden;
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 34px;
+  border: none;
+  border-radius: 10px;
+  background: #FFFFFF;
+  color: #FF868E;
+  z-index: 2;
+}
+
+.grid-item:hover .gr-i-hbtn{
+  visibility: visible;
+  cursor: pointer;
+}
+
+.gr-i-0 {
+  grid-column: span 1;
+  grid-row: span 2;
+}
+.gr-i-1 {
+  grid-column: span 1;
+  grid-row: span 1;
+}
+.gr-i-2 {
+  grid-column: span 1;
+  grid-row: span 1;
+}
+.gr-i-3 {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+.gr-i-4 {
+  grid-column: span 1;
+  grid-row: span 1;
+}
+
+.gr-i-5 {
+  grid-column: span 1;
+  grid-row: span 1;
+}
+
+.gr-i-6 {
+  grid-column: span 1;
+  grid-row: span 1;
+}
+
+.gr-i-7 {
+  grid-column: span 1;
+  grid-row: span 2;
+}
+
+.gr-i-8 {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.gr-i-9 {
+  grid-column: span 1;
+  grid-row: span 1;
+}
+
+.page-switch{
+  width: 284px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.page-switch > button{
+  width: 122px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.page-switch > button:hover {
+  cursor: pointer;
+}
+
+.sw-prev{
+  background-color: #FBE0DC;
+  background-image: url('/src/images/icons/prev.png');
+}
+
+.sw-next{
+  background-color: #FBE0DC;
+  background-image: url('/src/images/icons/next.png');
+}
+
+.sw-prev-dis {
+  background-color: #F8F8F7;
+  background-image: url('/src/images/icons/prev-dis.png');
+}
+
+.sw-next-dis {
+  background-color: #F8F8F7;
+  background-image: url('/src/images/icons/next-dis.png');
+}
+
+
+.sw-prev:active {
+  background-color: #FF868E;
+  background-image: url('/src/images/icons/prev-active.png');
+}
+
+.sw-next:active {
+  background-color: #FF868E;
+  background-image: url('/src/images/icons/next-active.png');
+}
+
+/* BREEDS INFO */
+.brI-cat-img{
+  width: 640px;
+  height: 350px;
+  border-radius: 20px;
+  margin: 0 0 50px 0;
+}
+
+.brI-text-box{
+  position: relative;
+}
+
+.brI-name{
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 20px;
+  padding: 5px 40px;
+  font-size: 36px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.brI-grid-box{
+  border: 3px solid #FBE0DC;
+  width: 640px;
+  height: 240px;
+  border-radius: 20px;
+  display: grid;
+  grid-auto-rows: 90px;
+  grid-template-columns: repeat(2, 270px);
+  gap: 20px;
+  justify-items: center;
+}
+
+.brI-full-desc{
+  position: absolute;
+  top: -30px;
+  right: 30px;
+  background: #F8F8F7;
+  visibility: hidden;
+  width: 270px;
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.brI-gr-i span{
+  font-weight: 500;
+}
+
+.brI-grid-box .gr-i-1:hover .brI-full-desc{
+  visibility: visible;
+}
+
+.brI-gr-i p{
+  margin: 0 0 10px 0;
+}
+
+.brI-grid-box .gr-i-1{
+  grid-column: span 2;
+  grid-row: span 1;
+  margin: 30px 0 0 50px;
+  text-align: center;
+}
+
+.brI-grid-box .gr-i-2 {
+  margin: 0 0 0 80px;
+  grid-column: span 1;
+  grid-row: span 1;
+}
+
+.brI-grid-box .gr-i-3 {
+  margin: 0 0 0 30px;
+  grid-column: span 1;
+  grid-row: span 1;
 }

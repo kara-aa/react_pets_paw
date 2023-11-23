@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import LikeIcon20 from '../images/icons/like-color-20.png'
 import DisikeIcon20 from '../images/icons/dislike-color-20.png'
 import FavIcon20 from '../images/icons/fav-20.png'
@@ -20,6 +20,7 @@ export default function Voting({history, onVoteClick}) {
       const data = await response.json();
       setImgId(data[0].id);
       setImgUrl(data[0].url);
+      console.log(data)
 
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
@@ -27,7 +28,7 @@ export default function Voting({history, onVoteClick}) {
     setLoading(false);
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     fetchDataFromAPI();
   }, [])
 
@@ -69,6 +70,10 @@ export default function Voting({history, onVoteClick}) {
 
   return (
     <>
+      <div className="tab-nav">
+        <button className="btn-t-back"></button>
+        <div className="tab-title">breeds</div>
+      </div>
       {loading && <Loader></Loader>}
       {!loading && (
         <div
@@ -84,7 +89,7 @@ export default function Voting({history, onVoteClick}) {
         ></button>
         <button className="btn-rate" onClick={() => handlerVote(-1)}></button>
       </div>
-        <History imageId={imgId} history={history}></History>
+      <History imageId={imgId} history={history}></History>
     </>
   );
 }
