@@ -35,65 +35,73 @@ export function TabNavForGallery({
   }
 
   return (
-    <div className="nav-breeds">
-      <div>
+    <div className="nav-gallery">
+      <div className="nav-gallery-title">
         <div className="tab-nav-gallery">
           <button className="btn-t-back"></button>
           <div className="tab-title">gallery</div>
         </div>
-        <button className="btn-g-upload">upload</button>
+        <button className="btn-g-upload"><p>UPLOAD</p></button>
       </div>
 
-      <div>
-        <label for="sel_g_order">Order</label>
-        <select
-          name="g_order"
-          id="sel_g_order"
-          className="sel-g-order"
-          defaultValue="random"
-        >
-          <option value="random">Random</option>
-          <option value="asc">Asc</option>
-          <option value="desc">Desc</option>
-        </select>
+      <div className="fillter-gallery">
+        <div>
+          <label for="sel_g_order">Order</label>
+          <select
+            name="g_order"
+            id="sel_g_order"
+            className="sel-g-order"
+            defaultValue="random"
+          >
+            <option value="random">Random</option>
+            <option value="asc">Asc</option>
+            <option value="desc">Desc</option>
+          </select>
+        </div>
 
-        <label for="sel_g_type">Type</label>
-        <select
-          name="g_type"
-          id="sel_g_type"
-          className="sel-g-type"
-          defaultValue="static"
-        >
-          <option value="all">All</option>
-          <option value="static">Static</option>
-          <option value="animated">Animated</option>
-        </select>
+        <div>
+          <label for="sel_g_type">Type</label>
+          <select
+            name="g_type"
+            id="sel_g_type"
+            className="sel-g-type"
+            defaultValue="static"
+          >
+            <option value="all">All</option>
+            <option value="static">Static</option>
+            <option value="animated">Animated</option>
+          </select>
+        </div>
 
-        <label for="sel_g_breeds">Breed</label>
-        <select
-          name="breeds"
-          id="sel_g_breeds"
-          className="sel-breeds"
-          defaultValue="all"
-          onChange={handlerSelectBreed}
-        >
-          <option value="all">All Breeds</option>
-          {breedsList}
-        </select>
+        <div>
+          <label for="sel_g_breeds">Breed</label>
+          <select
+            name="breeds"
+            id="sel_g_breeds"
+            className="sel-breeds"
+            defaultValue="all"
+            onChange={handlerSelectBreed}
+          >
+            <option value="all">All Breeds</option>
+            {breedsList}
+          </select>
+        </div>
 
-        <label for="sel_limG">Limit</label>
-        <select
-          name="limit_g_breeds"
-          id="sel_limG"
-          className="sel-limitG"
-          defaultValue="10"
-          onChange={handlerSelect}
-        >
-          <option value="5">5 items per page</option>
-          <option value="10">10 items per page</option>
-          <option value="15">15 items per page</option>
-          <option value="20">20 items per page</option>
-        </select>
+        <div>
+          <label for="sel_limG">Limit</label>
+          <select
+            name="limit_g_breeds"
+            id="sel_limG"
+            className="sel-limitG"
+            defaultValue="10"
+            onChange={handlerSelect}
+          >
+            <option value="5">5 items per page</option>
+            <option value="10">10 items per page</option>
+            <option value="15">15 items per page</option>
+            <option value="20">20 items per page</option>
+          </select>
+        </div>
       </div>
     </div>
   );
@@ -154,7 +162,7 @@ export default function Gallery() {
       >
         <img src={cat.image.url} alt="" />
         <div className="gr-i-hover"></div>
-        <button className="gr-i-hbtn">{cat.name}</button>
+        <button className="gr-i-hbtn gr-i-hgbtn"></button>
       </div>
     ));
   }
@@ -213,7 +221,7 @@ export default function Gallery() {
         onChangeHandlerLimit={onChangeLimit}
         onClickHandlerSort={onClickSort}
       ></TabNavForGallery>
-      <div className="breeds-content">
+      <div className="gallery-content">
         <div className="grid-body">{gridItems}</div>
         <div className="page-switch">
           <button

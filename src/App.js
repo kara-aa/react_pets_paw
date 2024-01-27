@@ -28,8 +28,8 @@ function App() {
         </div>
       </div>
       <div className="main-page">
-        {pageStore === "main" && <MainPage></MainPage>}
-        {pageStore !== "main" && <MainBlock page={pageStore}></MainBlock>}
+        {/* {pageStore === "main" && <MainPage></MainPage>} */}
+        <MainBlock page={pageStore}></MainBlock>
       </div>
     </div>
   );
