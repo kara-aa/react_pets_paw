@@ -25,13 +25,14 @@ export function TabNavForGallery({
       );
   }
 
-  function handlerSelect(event) {
+  function handlerSelect(event) {           //Function for data transfer about limit data
     let value = event.target.value;
     onChangeHandlerLimit(parseInt(value));
   }
 
-  function handlerBtnSort(order) {
-    onClickHandlerSort(order);
+  function handlerSelectSort(event) {       //Function for data transfer about sort changes
+    let value = event.target.value;
+    onClickHandlerSort(value);
   }
 
   return (
@@ -41,26 +42,28 @@ export function TabNavForGallery({
           <button className="btn-t-back"></button>
           <div className="tab-title">gallery</div>
         </div>
-        <button className="btn-g-upload"><p>UPLOAD</p></button>
+        <button className="btn-g-upload">
+          <p>UPLOAD</p>
+        </button>
       </div>
 
       <div className="fillter-gallery">
         <div>
-          <label for="sel_g_order">Order</label>
+          <label htmlFor="sel_g_order">Order</label>
           <select
             name="g_order"
             id="sel_g_order"
             className="sel-g-order"
-            defaultValue="random"
+            defaultValue="asc"
+            onChange={handlerSelectSort}
           >
-            <option value="random">Random</option>
             <option value="asc">Asc</option>
             <option value="desc">Desc</option>
           </select>
         </div>
 
         <div>
-          <label for="sel_g_type">Type</label>
+          <label htmlFor="sel_g_type">Type</label>
           <select
             name="g_type"
             id="sel_g_type"
@@ -74,7 +77,7 @@ export function TabNavForGallery({
         </div>
 
         <div>
-          <label for="sel_g_breeds">Breed</label>
+          <label htmlFor="sel_g_breeds">Breed</label>
           <select
             name="breeds"
             id="sel_g_breeds"
@@ -88,7 +91,7 @@ export function TabNavForGallery({
         </div>
 
         <div>
-          <label for="sel_limG">Limit</label>
+          <label htmlFor="sel_limG">Limit</label>
           <select
             name="limit_g_breeds"
             id="sel_limG"
@@ -110,12 +113,13 @@ export function TabNavForGallery({
 export default function Gallery() {
   const userId =
     "live_tjRhG76aZqVgTyDzKxFDZl4qGTeFx4IXrOemhE7D6IrsfY75X8QBC6THPXFa0MPe";
-  const [arrFromAPI, setAPIArr] = useState();
+  const [arrFromAPI, setAPIArr] = useState();     //Array from API with all information
   const [arrBreeds, setBreeds] = useState();
-  const [counter, setCounter] = useState(0);
-  const [limit, setLimit] = useState(10);
-  const [sortOrder, setOrder] = useState("ASC");
+  const [counter, setCounter] = useState(0);      //Counter page
+  const [limit, setLimit] = useState(10);         //Filter limit, for display quantity cats per page
+  const [sortOrder, setOrder] = useState("asc");
   const scrollArray = [];
+  const [arrFaves, setArrFaves] = useState();     //Array of user favourites
   let gridItems;
 
   if (arrFromAPI) {
@@ -135,24 +139,82 @@ export default function Gallery() {
       }).then((data) => resolve(data.json()));
     })
       .then((result) => {
-        result.forEach((item) => {
-          if (item.image) arrAPI.push(item);
-        });
-        return arrAPI;
+        const arrFaves = [];
+        new Promise((resolveFaves, reject) => {
+          fetch("https://api.thecatapi.com/v1/favourites", {
+            method: "GET",
+            headers: {
+              "content-type": "application/json",
+              "x-api-key": userId,
+            },
+          }).then((data) => resolveFaves(data.json()));
+        })
+          .then((resultFaves) => {
+            console.log(resultFaves)
+            result.forEach((item) => {
+              if (item.image) {
+                item.isFav = resultFaves.some(
+                  (itemFav) => itemFav.image.id === item.image.id
+                );
+                arrAPI.push(item);
+              }
+            });
+            resultFaves.forEach((itemFav) => {
+              arrFaves.push({imageId: itemFav.image.id, favId: itemFav.id });
+            });
+            return arrAPI;
+          })
+          .then((result) => {
+            setAPIArr(result);
+            setArrFaves(arrFaves);
+            result.forEach((catInfo) => {
+              if (catInfo.id && catInfo.name)
+                arrForBreeds.push({ id: catInfo.id, name: catInfo.name });
+              setBreeds(arrForBreeds);
+            });
+          });
       })
-      .then((result) => {
-        setAPIArr(result);
-        result.forEach((catInfo) => {
-          if (catInfo.id && catInfo.name)
-            arrForBreeds.push({ id: catInfo.id, name: catInfo.name });
-          setBreeds(arrForBreeds);
-        });
-      });
   }
-
   useEffect(() => {
     breeds();
   }, []);
+
+  function handlerClickGalleryFav(event) {          //Function for adding fav cat by click on item
+    let idFav = event.target.id;
+    let bodyFav = JSON.stringify({
+      "image_id": idFav,
+      "sub_id": "user-123"
+    })
+
+    let newData = arrFromAPI.slice();
+    console.log(newData);
+
+    for (const value of newData) {
+      if (value.image.id === idFav) {
+        if (value.isFav) {
+          const itemFav = arrFaves.find(item => item.imageId === idFav);
+          fetch(`https://api.thecatapi.com/v1/favourites/${itemFav.favId}`, {
+            method: "DELETE",
+            headers: {
+              "content-type": "application/json",
+              "x-api-key": userId,
+            },
+          });
+        } else {
+            fetch("https://api.thecatapi.com/v1/favourites", {
+              method: "POST",
+              headers: {
+                "content-type": "application/json",
+                "x-api-key": userId,
+              },
+              body: bodyFav,
+            });
+        }
+        value.isFav = !value.isFav;
+      }
+    }
+    setAPIArr(newData);
+  }
 
   if (scrollArray) {
     gridItems = scrollArray.map((cat, index) => (
@@ -162,18 +224,28 @@ export default function Gallery() {
       >
         <img src={cat.image.url} alt="" />
         <div className="gr-i-hover"></div>
-        <button className="gr-i-hbtn gr-i-hgbtn"></button>
+        <button
+          className={!cat.isFav ? "gr-i-hbtn gr-i-hgbtn" : "gr-i-hbtn gr-i-hgbtn-f"}
+          id={cat.image.id}
+          onClick={handlerClickGalleryFav}
+        ></button>
       </div>
     ));
   }
 
-  function handlerClickNext() {
+  function handlerClickNext(event) {                                   //Function for click on next button
+    const parentBlock = document.querySelector('.gallery-content');
+
     if (counter !== Math.ceil(arrFromAPI.length / limit) - 1)
       setCounter(counter + 1);
+    parentBlock.scrollTop = 0;
   }
 
   function handlerClickPrev() {
+    const parentBlock = document.querySelector(".gallery-content");
+
     if (counter !== 0) setCounter(counter - 1);
+    parentBlock.scrollTop = 0;
   }
 
   function onChangeLimit(limit) {

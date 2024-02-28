@@ -567,7 +567,7 @@ li{
   z-index: 2;
 }
 
-.gr-i-hgbtn{
+.gr-i-hgbtn, .gr-i-hgbtn-f{
   width: 40px;
   height: 40px;
   position: absolute;
@@ -575,6 +575,12 @@ li{
   left: 50%;
   transform: translate(-50%, -50%);
   background-image: url(/src/images/icons/fav-20.png);
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.gr-i-hgbtn-f {
+  background-image: url(/src/images/icons/fav-color-20.png);
   background-position: center;
   background-repeat: no-repeat;
 }
