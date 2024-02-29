@@ -6,7 +6,7 @@ import breedInfoReducer from "./reducers/breedInfoReducer";
 export default configureStore({
   reducer: {
     page: pageReducer,
-    breeds: breedsReducer,
+    arrBreeds: breedsReducer,
     breedInfo: breedInfoReducer,
   },
 });

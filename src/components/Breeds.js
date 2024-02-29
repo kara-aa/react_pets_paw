@@ -11,7 +11,6 @@ export function TabNavForBreeds({
   onClickHandlerSort,
 }) {
   let breedsList;
-
   if (arrBreeds) {
     breedsList = arrBreeds.map((info) => (
       <option key={info.id} value={info.id}>
@@ -114,20 +113,22 @@ export default function Breeds() {
       })
       .then((result) => {
         setAPIArr(result);
-        dispatch(addArray(arrAPI));
         result.forEach((catInfo) => {
-          if (catInfo.id && catInfo.name)
+          if (catInfo.id && catInfo.name) {
             arrForBreeds.push({ id: catInfo.id, name: catInfo.name });
-          setBreeds(arrForBreeds);
+            // dispatch(addArray({ id: catInfo.id, name: catInfo.name }));
+          }
+
         });
+        setBreeds(arrForBreeds);
+        dispatch(addArray(arrForBreeds));
       });
   }
 
-  useEffect(() => {
-    breeds();
-  }, []);
+  useEffect(() => breeds, []);
 
   if (scrollArray) {
+    console.log(scrollArray)
     gridItems = scrollArray.map((cat, index) => (
       <div
         className={"grid-item gr-i-" + (index > 9 ? index - 10 : index)}

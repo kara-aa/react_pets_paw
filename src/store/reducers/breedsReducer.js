@@ -7,7 +7,7 @@ export const breedsSlice = createSlice({
   },
   reducers: {
     addArray: (state, action) => {
-      state.value = state.value.concat(action.payload.slice());
+      state.value = action.payload;
     },
   },
 });

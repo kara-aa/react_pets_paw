@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Voting from "./Voting";
 import Breeds from "./Breeds";
 import Gallery from "./Gallery";
@@ -52,7 +52,11 @@ export default function MainBlock({page}) {
   return (
     <>
       <NavigationPanel></NavigationPanel>
-        <TabContent page={page} history={arrHistory} onVoteClick={handleUpdateHistory}></TabContent>
+        <TabContent
+          page={page}
+          history={arrHistory}
+          onVoteClick={handleUpdateHistory}
+        ></TabContent>
     </>
   );
 }

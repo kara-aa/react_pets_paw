@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { selectBreedsArray } from "../store/reducers/breedsReducer";
 
 export function TabNavForGallery({
   arrBreeds,
@@ -7,9 +9,10 @@ export function TabNavForGallery({
   onClickHandlerSort,
 }) {
   let breedsList;
+  const breedsListFromStore = [].concat(useSelector(selectBreedsArray));
 
   if (arrBreeds) {
-    breedsList = arrBreeds.map((info) => (
+    breedsList = breedsListFromStore.map((info) => (
       <option key={info.id} value={info.id}>
         {info.name}
       </option>
@@ -57,6 +60,7 @@ export function TabNavForGallery({
             defaultValue="asc"
             onChange={handlerSelectSort}
           >
+            <option value="rand">Random</option>
             <option value="asc">Asc</option>
             <option value="desc">Desc</option>
           </select>
@@ -113,13 +117,13 @@ export function TabNavForGallery({
 export default function Gallery() {
   const userId =
     "live_tjRhG76aZqVgTyDzKxFDZl4qGTeFx4IXrOemhE7D6IrsfY75X8QBC6THPXFa0MPe";
-  const [arrFromAPI, setAPIArr] = useState();     //Array from API with all information
+  const [arrFromAPI, setAPIArr] = useState(); //Array from API with all information
   const [arrBreeds, setBreeds] = useState();
-  const [counter, setCounter] = useState(0);      //Counter page
-  const [limit, setLimit] = useState(10);         //Filter limit, for display quantity cats per page
+  const [counter, setCounter] = useState(0); //Counter page
+  const [limit, setLimit] = useState(10); //Filter limit, for display quantity cats per page
   const [sortOrder, setOrder] = useState("asc");
   const scrollArray = [];
-  const [arrFaves, setArrFaves] = useState();     //Array of user favourites
+  const [arrFaves, setArrFaves] = useState(); //Array of user favourites
   let gridItems;
 
   if (arrFromAPI) {
@@ -134,57 +138,53 @@ export default function Gallery() {
     let arrAPI = [];
 
     new Promise((resolve, reject) => {
-      fetch("https://api.thecatapi.com/v1/breeds", {
+      fetch("https://api.thecatapi.com/v1/images/search?limit=100", {
         headers: { "x-api-key": userId },
       }).then((data) => resolve(data.json()));
-    })
-      .then((result) => {
-        const arrFaves = [];
-        new Promise((resolveFaves, reject) => {
-          fetch("https://api.thecatapi.com/v1/favourites", {
-            method: "GET",
-            headers: {
-              "content-type": "application/json",
-              "x-api-key": userId,
-            },
-          }).then((data) => resolveFaves(data.json()));
-        })
-          .then((resultFaves) => {
-            console.log(resultFaves)
-            result.forEach((item) => {
-              if (item.image) {
-                item.isFav = resultFaves.some(
-                  (itemFav) => itemFav.image.id === item.image.id
-                );
-                arrAPI.push(item);
-              }
-            });
-            resultFaves.forEach((itemFav) => {
-              arrFaves.push({imageId: itemFav.image.id, favId: itemFav.id });
-            });
-            return arrAPI;
-          })
-          .then((result) => {
-            setAPIArr(result);
-            setArrFaves(arrFaves);
-            result.forEach((catInfo) => {
-              if (catInfo.id && catInfo.name)
-                arrForBreeds.push({ id: catInfo.id, name: catInfo.name });
-              setBreeds(arrForBreeds);
-            });
-          });
+    }).then((result) => {
+      console.log(result);
+      const arrFaves = [];
+      new Promise((resolveFaves, reject) => {
+        fetch("https://api.thecatapi.com/v1/favourites", {
+          method: "GET",
+          headers: {
+            "content-type": "application/json",
+            "x-api-key": userId,
+          },
+        }).then((data) => resolveFaves(data.json()));
       })
+        .then((resultFaves) => {
+          result.forEach((item) => {
+              item.isFav = resultFaves.some(
+                (itemFav) => itemFav.image.id === item.id
+              );
+              arrAPI.push(item);
+          });
+          resultFaves.forEach((itemFav) => {
+            arrFaves.push({ imageId: itemFav.image.id, favId: itemFav.id });
+          });
+          return arrAPI;
+        })
+        .then((result) => {
+          setAPIArr(result);
+          setArrFaves(arrFaves);
+          result.forEach((catInfo) => {
+            if (catInfo.id && catInfo.name)
+              arrForBreeds.push({ id: catInfo.id, name: catInfo.name });
+            setBreeds(arrForBreeds);
+          });
+        });
+    });
   }
-  useEffect(() => {
-    breeds();
-  }, []);
+  useEffect(() => breeds, []);
 
-  function handlerClickGalleryFav(event) {          //Function for adding fav cat by click on item
+  function handlerClickGalleryFav(event) {
+    //Function for adding fav cat by click on item
     let idFav = event.target.id;
     let bodyFav = JSON.stringify({
-      "image_id": idFav,
-      "sub_id": "user-123"
-    })
+      image_id: idFav,
+      sub_id: "user-123",
+    });
 
     let newData = arrFromAPI.slice();
     console.log(newData);
@@ -192,7 +192,7 @@ export default function Gallery() {
     for (const value of newData) {
       if (value.image.id === idFav) {
         if (value.isFav) {
-          const itemFav = arrFaves.find(item => item.imageId === idFav);
+          const itemFav = arrFaves.find((item) => item.imageId === idFav);
           fetch(`https://api.thecatapi.com/v1/favourites/${itemFav.favId}`, {
             method: "DELETE",
             headers: {
@@ -201,14 +201,14 @@ export default function Gallery() {
             },
           });
         } else {
-            fetch("https://api.thecatapi.com/v1/favourites", {
-              method: "POST",
-              headers: {
-                "content-type": "application/json",
-                "x-api-key": userId,
-              },
-              body: bodyFav,
-            });
+          fetch("https://api.thecatapi.com/v1/favourites", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              "x-api-key": userId,
+            },
+            body: bodyFav,
+          });
         }
         value.isFav = !value.isFav;
       }
@@ -222,19 +222,22 @@ export default function Gallery() {
         className={"grid-item gr-i-" + (index > 9 ? index - 10 : index)}
         key={index}
       >
-        <img src={cat.image.url} alt="" />
+        <img src={cat.url} alt="" />
         <div className="gr-i-hover"></div>
         <button
-          className={!cat.isFav ? "gr-i-hbtn gr-i-hgbtn" : "gr-i-hbtn gr-i-hgbtn-f"}
-          id={cat.image.id}
+          className={
+            !cat.isFav ? "gr-i-hbtn gr-i-hgbtn" : "gr-i-hbtn gr-i-hgbtn-f"
+          }
+          id={cat.id}
           onClick={handlerClickGalleryFav}
         ></button>
       </div>
     ));
   }
 
-  function handlerClickNext(event) {                                   //Function for click on next button
-    const parentBlock = document.querySelector('.gallery-content');
+  function handlerClickNext(event) {
+    //Function for click on next button
+    const parentBlock = document.querySelector(".gallery-content");
 
     if (counter !== Math.ceil(arrFromAPI.length / limit) - 1)
       setCounter(counter + 1);

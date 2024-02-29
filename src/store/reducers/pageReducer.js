@@ -8,7 +8,6 @@ export const pageSlice = createSlice({
   reducers: {
     changePage: (state, action) => {
       state.value = action.payload;
-      console.log(action)
     }
   }
 })
