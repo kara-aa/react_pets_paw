@@ -2,10 +2,15 @@ import { Suspense, useState } from "react";
 import Voting from "./Voting";
 import Breeds from "./Breeds";
 import Gallery from "./Gallery";
-import { TabNavForBreeds } from "./Breeds";
 import BreedInfo from "./BreedInfo";
+import { useSelector, useDispatch } from "react-redux";
+import { selectPage, changePage } from "../store/reducers/pageReducer";
+import Likes from "./Likes";
+import Faves from "./Faves";
+import Dislikes from "./Dislikes";
 
 function NavigationPanel() {
+  const dispatch = useDispatch();
   return (
     <div className="nav-panel">
       <div className="inp-box">
@@ -16,7 +21,7 @@ function NavigationPanel() {
         />
         <button className="btn-search"></button>
       </div>
-      <button className="nav-btn nb-like"></button>
+      <button className="nav-btn nb-like" onClick={() => dispatch(changePage('likes'))}></button>
       <button className="nav-btn nb-fav"></button>
       <button className="nav-btn nb-dislike"></button>
     </div>
@@ -34,6 +39,9 @@ function TabContent({ history, onVoteClick, page }) {
       {page === "breeds" && <Breeds></Breeds>}
       {page === "gallery" && <Gallery></Gallery>}
       {page === "breed-info" && <BreedInfo></BreedInfo>}
+      {page === "likes" && <Likes></Likes>}
+      {page === "faves" && <Faves></Faves>}
+      {page === "dislikes" && <Dislikes></Dislikes>}
     </div>
   );
 }

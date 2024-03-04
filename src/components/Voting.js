@@ -1,10 +1,11 @@
 import { useLayoutEffect, useState } from "react";
-import LikeIcon20 from '../images/icons/like-color-20.png'
-import DisikeIcon20 from '../images/icons/dislike-color-20.png'
-import FavIcon20 from '../images/icons/fav-20.png'
+import LikeIcon20 from "../images/icons/like-color-20.png";
+import DisikeIcon20 from "../images/icons/dislike-color-20.png";
+import FavIcon20 from "../images/icons/fav-20.png";
 
-export default function Voting({history, onVoteClick}) {
-  const userId = "live_tjRhG76aZqVgTyDzKxFDZl4qGTeFx4IXrOemhE7D6IrsfY75X8QBC6THPXFa0MPe";
+export default function Voting({ history, onVoteClick }) {
+  const userId =
+    "live_tjRhG76aZqVgTyDzKxFDZl4qGTeFx4IXrOemhE7D6IrsfY75X8QBC6THPXFa0MPe";
   const [imgId, setImgId] = useState();
   const [imgUrl, setImgUrl] = useState();
   const [loading, setLoading] = useState(true);
@@ -20,8 +21,6 @@ export default function Voting({history, onVoteClick}) {
       const data = await response.json();
       setImgId(data[0].id);
       setImgUrl(data[0].url);
-      console.log(data)
-
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
     }
@@ -30,14 +29,14 @@ export default function Voting({history, onVoteClick}) {
 
   useLayoutEffect(() => {
     fetchDataFromAPI();
-  }, [])
+  }, []);
 
   function handlerHistoryOnClick(value) {
     let list = value === 1 ? "Likes" : value === -1 ? "Dislikes" : "Favourites";
 
     const body = {
       imageId: imgId,
-      action: 'added',
+      action: "added",
       list: list,
     };
 
@@ -53,7 +52,7 @@ export default function Voting({history, onVoteClick}) {
       value: value,
     };
 
-    if (value === 'fav') {
+    if (value === "fav") {
       url = "https://api.thecatapi.com/v1/favourites";
       delete body.value;
     }
@@ -67,7 +66,7 @@ export default function Voting({history, onVoteClick}) {
     setLoading(true);
     fetchDataFromAPI();
   }
-
+  console.log(history);
   return (
     <>
       <div className="tab-nav">
@@ -95,26 +94,42 @@ export default function Voting({history, onVoteClick}) {
 }
 
 function History({ history }) {
-
   let historyActions = history.map((action, index) => {
     const { imageId: imgId, action: move, list, time } = action;
     return (
       <li key={index}>
-        <HistoryAction imageId={imgId} action={move} list={list} time={time}></HistoryAction>
-      </li>);
-  })
+        <HistoryAction
+          imageId={imgId}
+          action={move}
+          list={list}
+          time={time}
+        ></HistoryAction>
+      </li>
+    );
+  });
 
   return (
     <>
       <div className="history-list">
+        {history.length === 0 ? (
+          <div className="empty-history">
+            History actions is empty. <br/>Make new actions.{" "}
+          </div>
+        ) : (
           <ul>{historyActions}</ul>
+        )}
       </div>
     </>
   );
 }
 
 function HistoryAction({ imageId, action, list, time }) {
-  let iconUrl = list === 'Likes' ? LikeIcon20 : list === "Dislikes" ? DisikeIcon20 : FavIcon20;
+  let iconUrl =
+    list === "Likes"
+      ? LikeIcon20
+      : list === "Dislikes"
+      ? DisikeIcon20
+      : FavIcon20;
   return (
     <>
       <div className="act-box">
@@ -132,7 +147,5 @@ function HistoryAction({ imageId, action, list, time }) {
 }
 
 function Loader() {
-  return (
-    <div className="loader"></div>
-  )
+  return <div className="loader"></div>;
 }

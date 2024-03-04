@@ -116,7 +116,6 @@ export default function Breeds() {
         result.forEach((catInfo) => {
           if (catInfo.id && catInfo.name) {
             arrForBreeds.push({ id: catInfo.id, name: catInfo.name });
-            // dispatch(addArray({ id: catInfo.id, name: catInfo.name }));
           }
 
         });

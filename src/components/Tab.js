@@ -9,6 +9,17 @@ export default function Tab({ children }) {
   let url =
     children === "voting" ? Vote : children === "breeds" ? Breeds : Gallery;
 
+  function handlerClick(event) {
+    let tab = event.target;
+    let parentBox = document.querySelector('.tabs-box');
+    for (const value of parentBox.children) {
+      if (value !== tab)
+        value.className = 'tab';
+    }
+    console.log(parentBox.children)
+    tab.parentNode.className = 'tab-f';
+  }
+
   return (
     <div className="tab">
       <div className="tab-icon">
@@ -16,7 +27,7 @@ export default function Tab({ children }) {
       </div>
       <button
         className="tab-btn"
-        onClick={() => dispatch(changePage(children))}
+        onClick={(event) => { dispatch(changePage(children)); handlerClick(event) }}
       >
         {children}
       </button>

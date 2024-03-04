@@ -67,6 +67,26 @@ select:focus {
 
 }
 
+.tabs-box .tab-f:first-child .tab-icon {
+  background: #b4b7ff;
+  border: 4px solid #FBE0DC;
+}
+
+.tabs-box .tab-f:nth-child(2) .tab-icon {
+  background: #97eab9;
+  border: 4px solid #FBE0DC;
+}
+
+.tabs-box .tab-f:last-child .tab-icon {
+  background: #ffd280;
+  border: 4px solid #FBE0DC;
+}
+
+.tab-f .tab-btn {
+  background: #FF868E;
+  color: #fff;
+}
+
 .tab-icon {
   width: 138px;
   height: 198px;
@@ -184,6 +204,13 @@ select:focus {
 }
 .nb-dislike {
   background-image: url('/src/images/icons/dislike-30.png');
+}
+
+.nav-btn:hover {
+  cursor: pointer;
+  background-color: #FBE0DC;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* TAB CONTENT */
@@ -803,3 +830,9 @@ li{
   color: #8C8C8C;
 }
 
+.empty-history{
+  margin: 25% 0 0 0;
+  text-align: center;
+  color: #FF868E;
+  font-size: 20px;
+}

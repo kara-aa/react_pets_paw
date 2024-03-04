@@ -1,12 +1,14 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectBreedsArray } from "../store/reducers/breedsReducer";
+import React from "react";
 
 export function TabNavForGallery({
   arrBreeds,
+  onChangeHandlerType,
   onChangeHandlerLimit,
   onChangeHandlerBreeds,
-  onClickHandlerSort,
+  onChangeHandlerSort,
 }) {
   let breedsList;
   const breedsListFromStore = [].concat(useSelector(selectBreedsArray));
@@ -17,6 +19,11 @@ export function TabNavForGallery({
         {info.name}
       </option>
     ));
+  }
+
+  function handlerSelectType(event) {
+    let value = event.target.value;
+    onChangeHandlerType();
   }
 
   function handlerSelectBreed(event) {
@@ -35,7 +42,7 @@ export function TabNavForGallery({
 
   function handlerSelectSort(event) {       //Function for data transfer about sort changes
     let value = event.target.value;
-    onClickHandlerSort(value);
+    onChangeHandlerSort("https://api.thecatapi.com/v1/images/search?limit=100&order=" + value);
   }
 
   return (
@@ -57,12 +64,12 @@ export function TabNavForGallery({
             name="g_order"
             id="sel_g_order"
             className="sel-g-order"
-            defaultValue="asc"
+            defaultValue="RAND"
             onChange={handlerSelectSort}
           >
-            <option value="rand">Random</option>
-            <option value="asc">Asc</option>
-            <option value="desc">Desc</option>
+            <option value="RAND">Random</option>
+            <option value="ASC">Asc</option>
+            <option value="DESC">Desc</option>
           </select>
         </div>
 
@@ -73,6 +80,7 @@ export function TabNavForGallery({
             id="sel_g_type"
             className="sel-g-type"
             defaultValue="static"
+            onChange={handlerSelectType}
           >
             <option value="all">All</option>
             <option value="static">Static</option>
@@ -190,7 +198,7 @@ export default function Gallery() {
     console.log(newData);
 
     for (const value of newData) {
-      if (value.image.id === idFav) {
+      if (value.id === idFav) {
         if (value.isFav) {
           const itemFav = arrFaves.find((item) => item.imageId === idFav);
           fetch(`https://api.thecatapi.com/v1/favourites/${itemFav.favId}`, {
@@ -216,25 +224,6 @@ export default function Gallery() {
     setAPIArr(newData);
   }
 
-  if (scrollArray) {
-    gridItems = scrollArray.map((cat, index) => (
-      <div
-        className={"grid-item gr-i-" + (index > 9 ? index - 10 : index)}
-        key={index}
-      >
-        <img src={cat.url} alt="" />
-        <div className="gr-i-hover"></div>
-        <button
-          className={
-            !cat.isFav ? "gr-i-hbtn gr-i-hgbtn" : "gr-i-hbtn gr-i-hgbtn-f"
-          }
-          id={cat.id}
-          onClick={handlerClickGalleryFav}
-        ></button>
-      </div>
-    ));
-  }
-
   function handlerClickNext(event) {
     //Function for click on next button
     const parentBlock = document.querySelector(".gallery-content");
@@ -255,12 +244,13 @@ export default function Gallery() {
     setLimit(limit);
   }
 
-  function onClickSort(order) {
-    if (order !== sortOrder) {
-      setCounter(0);
-      setOrder(order);
-      setAPIArr(arrFromAPI.reverse());
-    }
+  function onChangeType() {
+    const newArrApi = [];
+    console.log(newArrApi)
+    // for (const value of arrFromAPI) {
+    //   if(value.url )
+    // }
+
   }
 
   function onChangeRequest(link) {
@@ -277,8 +267,7 @@ export default function Gallery() {
         .then((result) => {
           result.forEach((item) => {
             let addInfo = { id: item.id, url: item.url };
-            item.breeds[0].image = addInfo;
-            newArrApi.push(item.breeds[0]);
+            newArrApi.push(addInfo);
           });
           return newArrApi;
         })
@@ -292,12 +281,16 @@ export default function Gallery() {
     <>
       <TabNavForGallery
         arrBreeds={arrBreeds}
+        onChangeHandlerType={onChangeType}
         onChangeHandlerBreeds={onChangeRequest}
         onChangeHandlerLimit={onChangeLimit}
-        onClickHandlerSort={onClickSort}
+        onChangeHandlerSort={onChangeRequest}
       ></TabNavForGallery>
       <div className="gallery-content">
-        <div className="grid-body">{gridItems}</div>
+        <GridBody
+          gridContent={scrollArray}
+          handlerFav={handlerClickGalleryFav}
+        ></GridBody>
         <div className="page-switch">
           <button
             className={counter === 0 ? "sw-prev-dis" : "sw-prev"}
@@ -315,4 +308,33 @@ export default function Gallery() {
       </div>
     </>
   );
+}
+
+export function GridBody({ gridContent, handlerFav }) {
+  let gridItems;
+
+  if (gridContent) {
+    gridItems = gridContent.map((cat, index) => (
+      <div
+        className={"grid-item gr-i-" + (index > 9 ? index - 10 : index)}
+        key={index}
+      >
+        <img src={cat.url} alt="" />
+        <div className="gr-i-hover"></div>
+        <button
+          className={
+            !cat.isFav ? "gr-i-hbtn gr-i-hgbtn" : "gr-i-hbtn gr-i-hgbtn-f"
+          }
+          id={cat.id}
+          onClick={handlerFav}
+        ></button>
+      </div>
+    ));
+  }
+
+  return (
+    <div className="grid-body">
+      {gridItems}
+    </div>
+  )
 }
