@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectVotes, addVotes } from "../store/reducers/votesReducer";
+import { selectVotes, selectVotesUp, selectVotesDown, addVotes, addVotesUp, addVotesDown } from "../store/reducers/votesReducer";
 
 
 export default function Likes() {
@@ -11,13 +11,13 @@ export default function Likes() {
   const scrollArray = [];
   const dispatch = useDispatch();
   const votesStore = useSelector(selectVotes);
+  const votesUpStore = useSelector(selectVotesUp);
+  const votesDownStore = useSelector(selectVotesDown);
 
-  if (arrLikesAPI) {
-    scrollArray.length = 0;
-    scrollArray.push(
-      ...arrLikesAPI.slice(counter * 20, counter * 20 + 20)
-    );
-  }
+  scrollArray.length = 0;
+  scrollArray.push(
+    ...votesUpStore.slice(counter * 20, counter * 20 + 20)
+  );
 
   function likes() {
     const arrLikes = [];
@@ -36,7 +36,9 @@ export default function Likes() {
         return result;
       })
       .then((result) => {
-        dispatch(addVotes(arrForStore));
+        if (votesStore.length === 0) dispatch(addVotes(arrForStore));
+        if (votesUpStore.length === 0) dispatch(addVotesUp());
+        if (votesDownStore.length === 0) dispatch(addVotesDown());
         setArrLikes(arrLikes);
       });
   }
@@ -86,14 +88,13 @@ export default function Likes() {
 
 export function GridBody({ gridContent }) {
   let gridItems;
-  console.log(gridContent)
   if (gridContent) {
     gridItems = gridContent.map((cat, index) => (
       <div
         className={"grid-item gr-i-" + (index > 9 ? index - 10 : index)}
         key={index}
       >
-        <img src={cat.url} alt="" />
+        <img src={cat.image.url} alt="" />
       </div>
     ));
   }

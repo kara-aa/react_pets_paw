@@ -12,11 +12,15 @@ export default function Tab({ children }) {
   function handlerClick(event) {
     let tab = event.target;
     let parentBox = document.querySelector('.tabs-box');
+    let parentBoxBtns = document.querySelector(".nav-panel");
+    for (const value of parentBoxBtns.children) {
+      if (value.classList.contains("nav-btn-f") && value.localName === "button")
+        value.classList.replace("nav-btn-f", "nav-btn");
+    }
     for (const value of parentBox.children) {
       if (value !== tab)
         value.className = 'tab';
     }
-    console.log(parentBox.children)
     tab.parentNode.className = 'tab-f';
   }
 
