@@ -161,7 +161,12 @@ select:focus {
   height: 60px;
   background: #fff;
   border-radius: 20px;
+  border: 2px solid #fff;
   display: flex;
+}
+
+.inp-box:hover{
+  border: 2px solid #FBE0DC;
 }
 
 .inp-panel{
@@ -175,24 +180,45 @@ select:focus {
   flex: 1 1 auto;
 }
 
+.inp-panel:focus{
+  outline: none !important;
+}
+
 .search-results{
+  visibility: hidden;
   position: absolute;
   top: 95px;
-  z-index: 1;
+  z-index: 999;
   width: 470px;
   max-height: 250px;
-  border-radius: 20px;
+  box-sizing: border-box;
   padding: 0 10px;
-  background-color: wheat;
+  border-radius: 20px;
+  background-color: #fff;
+  border: 2px solid #FF868E;
   overflow: scroll;
-  -ms-overflow-style: none;
   overflow-x: hidden;
 }
 
+.search-results::-webkit-scrollbar {
+  width: 0;
+}
+
+.inp-panel:focus ~ .btn-search + .search-results {
+  visibility: visible;
+}
+
 .search-results li{
-  background-color: #b4b7ff;
   height: 30px;
+  margin: 0 0 10px 0px;
   font-size: 20px;
+  color: #8C8C8C;
+  border-bottom: 1px solid #FBE0DC;
+}
+
+.search-results li:hover{
+  cursor: pointer;
+  background: #FBE0DC;
 }
 
 .btn-search{

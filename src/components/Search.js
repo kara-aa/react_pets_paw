@@ -8,28 +8,32 @@ export default function Search() {
   const [APIArr, setAPIArr] = useState([]);
   const searchBreed = useSelector(selectSearchRequest);
 
-  function searchRequest() {
-    let newArrApi = [];
-    new Promise((resolve, reject) => {
-      fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${searchBreed}&limit=20`, {
-        headers: { "x-api-key": userId },
-      }).then((data) => resolve(data.json()));
-    })
-      .then((result) => {
-        result.forEach((item) => {
-          let addInfo = { id: item.id, url: item.url };
-          item.breeds[0].image = addInfo;
-          newArrApi.push(item.breeds[0]);
-        });
-        return newArrApi;
+  useEffect(() => {
+    function searchRequest() {
+      let newArrApi = [];
+      new Promise((resolve, reject) => {
+        fetch(
+          `https://api.thecatapi.com/v1/images/search?breed_ids=${searchBreed}&limit=20`,
+          {
+            headers: { "x-api-key": userId },
+          }
+        ).then((data) => resolve(data.json()));
       })
-      .then((result) => {
-        console.log(result);
-        setAPIArr(newArrApi);
-      });
-  }
-
-  useEffect(() => searchRequest, [])
+        .then((result) => {
+          result.forEach((item) => {
+            let addInfo = { id: item.id, url: item.url };
+            item.breeds[0].image = addInfo;
+            newArrApi.push(item.breeds[0]);
+          });
+          return newArrApi;
+        })
+        .then((result) => {
+          console.log(result);
+          setAPIArr(newArrApi);
+        });
+    }
+    searchRequest();
+  }, [searchBreed]);
 
   return (
     <>

@@ -14,24 +14,21 @@ import Search from "./Search";
 
 function NavigationPanel() {
   const dispatch = useDispatch();
-  const [serchTerm, setSearchTerm] = useState('');
   const [searchResult, setSearchResult] = useState([]);
   const breedsArr = useSelector(selectBreedsArray);
 
   function handlerClickSearchResult(idBreed) {
     dispatch(changePage('search'));
     dispatch(changeSearchRequest(idBreed));
-
+    const breedsListBlock = document.querySelector(".search-results");
+    // breedsListBlock.style.visibility = "hidden";
   }
 
   function handlerSearch(event) {
-    console.log('yes')
-    const block = document.querySelector(".search-results");
-    setSearchTerm(event.target.value);
+    const breedsListBlock = document.querySelector('.search-results');
+    // breedsListBlock.style.visibility = 'visible';
     const result = breedsArr.filter(item => item.name.toLowerCase().includes(event.target.value.toLowerCase()));
-    console.log(searchResult)
     setSearchResult(result);
-    return result;
   }
 
   const searchResultList = searchResult.map((item) =>
@@ -65,9 +62,7 @@ function NavigationPanel() {
         />
         <button className="btn-search"></button>
         <div className="search-results">
-          <ul>
-            {searchResultList}
-          </ul>
+          <ul>{searchResultList}</ul>
         </div>
       </div>
       <button
