@@ -8,7 +8,6 @@ export const breedInfoSlice = createSlice({
   reducers: {
     addInfoBreed: (state, action) => {
       state.value = Object.assign({}, action.payload);
-      console.log(action.payload)
     },
   },
 });

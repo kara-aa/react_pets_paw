@@ -5,6 +5,7 @@ import breedInfoReducer from "./reducers/breedInfoReducer";
 import votesReducer from "./reducers/votesReducer";
 import favesReducer from "./reducers/favesReducer";
 import searchReducer from "./reducers/searchReducer";
+import historyGalleryReducer from "./reducers/historyGalleryReducer";
 
 export default configureStore({
   reducer: {
@@ -14,5 +15,6 @@ export default configureStore({
     votes: votesReducer,
     faves: favesReducer,
     search: searchReducer,
+    historyGallery: historyGalleryReducer,
   },
 });

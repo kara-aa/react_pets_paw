@@ -29,6 +29,7 @@ export default function Likes() {
       }).then((data) => resolve(data.json()));
     })
       .then((result) => {
+        result.reverse();
         if (votesStore.length === 0) {
           result.forEach((item) => arrLikes.push(item.image));
           result.forEach((item) => arrForStore.push({ image: item.image, value: item.value }));

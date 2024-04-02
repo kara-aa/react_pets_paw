@@ -33,6 +33,7 @@ export default function Voting({ history, onVoteClick }) {
 
   function handlerHistoryOnClick(value) {
     let list = value === 1 ? "Likes" : value === -1 ? "Dislikes" : "Favourites";
+    console.log(value)
 
     const body = {
       imageId: imgId,

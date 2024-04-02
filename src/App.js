@@ -5,9 +5,11 @@ import MainPage from "./components/MainPage";
 import MainBlock from "./components/MainBlock";
 import { useSelector } from "react-redux";
 import { selectPage } from "./store/reducers/pageReducer";
+import Breeds from "./mandatoryData/breedsList";
 
 function App() {
   const pageStore = useSelector(selectPage);
+  Breeds();
 
   return (
     <div className="wrapper">
@@ -28,7 +30,6 @@ function App() {
         </div>
       </div>
       <div className="main-page">
-        {/* {pageStore === "main" && <MainPage></MainPage>} */}
         <MainBlock page={pageStore}></MainBlock>
       </div>
     </div>

@@ -165,6 +165,10 @@ select:focus {
   display: flex;
 }
 
+.inp-box-f{
+  border: 2px solid #FF868E !important;
+}
+
 .inp-box:hover{
   border: 2px solid #FBE0DC;
 }
@@ -204,10 +208,6 @@ select:focus {
   width: 0;
 }
 
-.inp-panel:focus ~ .btn-search + .search-results {
-  visibility: visible;
-}
-
 .search-results li{
   height: 30px;
   margin: 0 0 10px 0px;
@@ -218,7 +218,7 @@ select:focus {
 
 .search-results li:hover{
   cursor: pointer;
-  background: #FBE0DC;
+  color: #FF868E;
 }
 
 .btn-search{

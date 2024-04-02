@@ -28,7 +28,6 @@ export default function Search() {
           return newArrApi;
         })
         .then((result) => {
-          console.log(result);
           setAPIArr(newArrApi);
         });
     }

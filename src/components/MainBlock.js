@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Voting from "./Voting";
 import Breeds from "./Breeds";
 import Gallery from "./Gallery";
@@ -14,26 +14,45 @@ import Search from "./Search";
 
 function NavigationPanel() {
   const dispatch = useDispatch();
-  const [searchResult, setSearchResult] = useState([]);
   const breedsArr = useSelector(selectBreedsArray);
-
+  const [searchResult, setSearchResult] = useState([]);
+  useEffect(() => foo , [breedsArr]);
+  function foo() {
+    setSearchResult(breedsArr);
+  }
   function handlerClickSearchResult(idBreed) {
     dispatch(changePage('search'));
     dispatch(changeSearchRequest(idBreed));
-    const breedsListBlock = document.querySelector(".search-results");
-    // breedsListBlock.style.visibility = "hidden";
   }
 
   function handlerSearch(event) {
-    const breedsListBlock = document.querySelector('.search-results');
-    // breedsListBlock.style.visibility = 'visible';
     const result = breedsArr.filter(item => item.name.toLowerCase().includes(event.target.value.toLowerCase()));
     setSearchResult(result);
   }
 
-  const searchResultList = searchResult.map((item) =>
-    (<li key={item.id} onClick={() => handlerClickSearchResult(item.id)}>{item.name}</li>)
-  );
+  const searchResultList = searchResult.map((item) => (
+    <li key={item.id} onClick={() => handlerClickSearchResult(item.id)}>
+      {item.name}
+    </li>
+  ));
+
+  function handlerFocusInput() {
+    const searchInput = document.querySelector('.inp-box');
+    const resultList = document.querySelector(".search-results");
+    searchInput.classList.add('inp-box-f');
+    resultList.style.visibility = 'visible';
+  }
+
+  function handlerBlurInput(e) {
+    const searchInput = document.querySelector(".inp-box");
+    setTimeout(function () {
+      const resultList = document.querySelector(".search-results");
+      resultList.style.visibility = "hidden";
+      e.target.textContent = '';
+    }, 1000);
+    searchInput.classList.remove("inp-box-f");
+
+  }
 
   function handlerClickNavBtns(event) {
     let btn = event.target;
@@ -59,6 +78,8 @@ function NavigationPanel() {
           type="text"
           placeholder="Search for breeds by name"
           onChange={(e) => handlerSearch(e)}
+          onFocus={handlerFocusInput}
+          onBlur={(e) => handlerBlurInput(e)}
         />
         <button className="btn-search"></button>
         <div className="search-results">

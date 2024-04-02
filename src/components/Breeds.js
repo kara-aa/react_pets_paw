@@ -120,14 +120,12 @@ export default function Breeds() {
 
         });
         setBreeds(arrForBreeds);
-        dispatch(addArray(arrForBreeds));
       });
   }
 
   useEffect(() => breeds, []);
 
   if (scrollArray) {
-    console.log(scrollArray)
     gridItems = scrollArray.map((cat, index) => (
       <div
         className={"grid-item gr-i-" + (index > 9 ? index - 10 : index)}

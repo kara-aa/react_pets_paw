@@ -28,11 +28,12 @@ export default function Dislikes() {
     const arrForStore = [];
 
     new Promise((resolve, reject) => {
-      fetch("https://api.thecatapi.com/v1/votes?limit=70", {
+      fetch("https://api.thecatapi.com/v1/votes", {
         headers: { "x-api-key": userId },
       }).then((data) => resolve(data.json()));
     })
       .then((result) => {
+        result.reverse();
         if (votesStore.length === 0) {
           result.forEach((item) => arrDislikes.push(item.image));
           result.forEach((item) =>
@@ -45,6 +46,7 @@ export default function Dislikes() {
         if (votesStore.length === 0) dispatch(addVotes(arrForStore));
         if (votesUpStore.length === 0) dispatch(addVotesUp());
         if (votesDownStore.length === 0) dispatch(addVotesDown());
+        console.log(result)
         setArrDislikes(votesDownStore);
       });
   }

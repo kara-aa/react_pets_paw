@@ -28,6 +28,7 @@ export default function Faves() {
       }).then((data) => resolve(data.json()))
     })
       .then((result) => {
+        result.reverse();
         if (favesStore.length === 0) {
           result.forEach((item) => arrFaves.push(item.image));
           result.forEach((item) => arrForStore.push(item.image));

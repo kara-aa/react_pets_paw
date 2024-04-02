@@ -1,10 +1,10 @@
 import { Suspense, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectBreedsArray } from "../store/reducers/breedsReducer";
+import { addHistory, clearHistory, selectHistoryGallery } from "../store/reducers/historyGalleryReducer";
 import React from "react";
 
 export function TabNavForGallery({
-  arrBreeds,
   onChangeHandlerType,
   onChangeHandlerLimit,
   onChangeHandlerBreeds,
@@ -13,36 +13,30 @@ export function TabNavForGallery({
   let breedsList;
   const breedsListFromStore = [].concat(useSelector(selectBreedsArray));
 
-  if (arrBreeds) {
-    breedsList = breedsListFromStore.map((info) => (
-      <option key={info.id} value={info.id}>
-        {info.name}
-      </option>
-    ));
-  }
+  breedsList = breedsListFromStore.map((info) => (
+    <option key={info.id} value={info.id}>
+      {info.name}
+    </option>
+  ));
 
   function handlerSelectType(event) {
     let value = event.target.value;
-    onChangeHandlerType();
+    onChangeHandlerType(value, 'mime_types');
   }
 
   function handlerSelectBreed(event) {
     let value = event.target.value;
-    if (value === "all") onChangeHandlerBreeds(value);
-    else
-      onChangeHandlerBreeds(
-        "https://api.thecatapi.com/v1/images/search?limit=65&breed_ids=" + value
-      );
+    onChangeHandlerBreeds(value, 'breed_ids')
   }
 
   function handlerSelect(event) {           //Function for data transfer about limit data
     let value = event.target.value;
-    onChangeHandlerLimit(parseInt(value));
+    onChangeHandlerLimit(value, "limit");
   }
 
   function handlerSelectSort(event) {       //Function for data transfer about sort changes
     let value = event.target.value;
-    onChangeHandlerSort("https://api.thecatapi.com/v1/images/search?limit=100&order=" + value);
+    onChangeHandlerSort(value, 'order');
   }
 
   return (
@@ -82,9 +76,9 @@ export function TabNavForGallery({
             defaultValue="static"
             onChange={handlerSelectType}
           >
-            <option value="all">All</option>
-            <option value="static">Static</option>
-            <option value="animated">Animated</option>
+            <option value="gif,jpg">All</option>
+            <option value="jpg">Static</option>
+            <option value="gif">Animated</option>
           </select>
         </div>
 
@@ -126,65 +120,54 @@ export default function Gallery() {
   const userId =
     "live_tjRhG76aZqVgTyDzKxFDZl4qGTeFx4IXrOemhE7D6IrsfY75X8QBC6THPXFa0MPe";
   const [arrFromAPI, setAPIArr] = useState(); //Array from API with all information
-  const [arrBreeds, setBreeds] = useState();
   const [counter, setCounter] = useState(0); //Counter page
-  const [limit, setLimit] = useState(10); //Filter limit, for display quantity cats per page
-  const [sortOrder, setOrder] = useState("asc");
-  const scrollArray = [];
   const [arrFaves, setArrFaves] = useState(); //Array of user favourites
-  let gridItems;
+  const [link, setLink] = useState(
+    `https://api.thecatapi.com/v1/images/search?limit=10`
+  );
+  const historyGallery = useSelector(selectHistoryGallery);
+  console.log(historyGallery)
+  const dispatch = useDispatch();
 
-  if (arrFromAPI) {
-    scrollArray.length = 0;
-    scrollArray.push(
-      ...arrFromAPI.slice(counter * limit, counter * limit + limit)
-    );
-  }
-
-  function breeds() {
-    const arrForBreeds = [];
+  function breeds(link) {
     let arrAPI = [];
-
-    new Promise((resolve, reject) => {
-      fetch("https://api.thecatapi.com/v1/images/search?limit=100", {
-        headers: { "x-api-key": userId },
-      }).then((data) => resolve(data.json()));
-    }).then((result) => {
-      console.log(result);
-      const arrFaves = [];
-      new Promise((resolveFaves, reject) => {
-        fetch("https://api.thecatapi.com/v1/favourites", {
-          method: "GET",
-          headers: {
-            "content-type": "application/json",
-            "x-api-key": userId,
-          },
-        }).then((data) => resolveFaves(data.json()));
-      })
-        .then((resultFaves) => {
-          result.forEach((item) => {
+    if (counter >= historyGallery.length) {
+      new Promise((resolve, reject) => {
+        fetch(link, {
+          headers: { "x-api-key": userId },
+        }).then((data) => resolve(data.json()));
+      }).then((result) => {
+        const arrFaves = [];
+        new Promise((resolveFaves, reject) => {
+          fetch("https://api.thecatapi.com/v1/favourites", {
+            method: "GET",
+            headers: {
+              "content-type": "application/json",
+              "x-api-key": userId,
+            },
+          }).then((data) => resolveFaves(data.json()));
+        })
+          .then((resultFaves) => {
+            result.forEach((item) => {
               item.isFav = resultFaves.some(
                 (itemFav) => itemFav.image.id === item.id
               );
               arrAPI.push(item);
+            });
+            resultFaves.forEach((itemFav) => {
+              arrFaves.push({ imageId: itemFav.image.id, favId: itemFav.id });
+            });
+            return arrAPI;
+          })
+          .then((result) => {
+            setAPIArr(result);
+            setArrFaves(arrFaves);
+            dispatch(addHistory([result]));
           });
-          resultFaves.forEach((itemFav) => {
-            arrFaves.push({ imageId: itemFav.image.id, favId: itemFav.id });
-          });
-          return arrAPI;
-        })
-        .then((result) => {
-          setAPIArr(result);
-          setArrFaves(arrFaves);
-          result.forEach((catInfo) => {
-            if (catInfo.id && catInfo.name)
-              arrForBreeds.push({ id: catInfo.id, name: catInfo.name });
-            setBreeds(arrForBreeds);
-          });
-        });
-    });
+      });
+    }
   }
-  useEffect(() => breeds, []);
+  useEffect(() => breeds(link, counter), [link, counter]);
 
   function handlerClickGalleryFav(event) {
     //Function for adding fav cat by click on item
@@ -227,68 +210,48 @@ export default function Gallery() {
   function handlerClickNext(event) {
     //Function for click on next button
     const parentBlock = document.querySelector(".gallery-content");
-
-    if (counter !== Math.ceil(arrFromAPI.length / limit) - 1)
-      setCounter(counter + 1);
+    setCounter(counter + 1);
     parentBlock.scrollTop = 0;
   }
 
   function handlerClickPrev() {
     const parentBlock = document.querySelector(".gallery-content");
-
     if (counter !== 0) setCounter(counter - 1);
     parentBlock.scrollTop = 0;
   }
 
-  function onChangeLimit(limit) {
-    setLimit(limit);
-  }
-
-  function onChangeType() {
-    const newArrApi = [];
-    console.log(newArrApi)
-    // for (const value of arrFromAPI) {
-    //   if(value.url )
-    // }
-
-  }
-
-  function onChangeRequest(link) {
-    let newArrApi = [];
+  function onChangeRequest(value, param) {            //Function for changing request by filters(limit, breeds, etc)
+    let newLink;
     setCounter(0);
-    setOrder("ASC");
-    if (link === "all") breeds();
-    else {
-      new Promise((resolve, reject) => {
-        fetch(link, {
-          headers: { "x-api-key": userId },
-        }).then((data) => resolve(data.json()));
-      })
-        .then((result) => {
-          result.forEach((item) => {
-            let addInfo = { id: item.id, url: item.url };
-            newArrApi.push(addInfo);
-          });
-          return newArrApi;
-        })
-        .then((result) => {
-          setAPIArr(newArrApi);
-        });
+    dispatch(clearHistory());
+
+    if (link.includes(param) && param + value === "breed_idsall") {
+      let regex = new RegExp(`(\\?|&)${param}=([^&]*)`);
+      newLink = link.replace(regex, '');
+      setLink(newLink);
+    } else if (link.includes(param)) {
+      if (!link.includes(param + value)) {
+        let regex = new RegExp(`(\\?|&)${param}=([^&]*)`);
+        newLink = link.replace(regex, `$1${param}=${value}`);
+        setLink(newLink);
+      }
+    } else {
+      newLink = link + `&${param}=${value}`;
+      setLink(newLink);
     }
   }
 
   return (
     <>
       <TabNavForGallery
-        arrBreeds={arrBreeds}
-        onChangeHandlerType={onChangeType}
+        onChangeHandlerType={onChangeRequest}
         onChangeHandlerBreeds={onChangeRequest}
-        onChangeHandlerLimit={onChangeLimit}
+        onChangeHandlerLimit={onChangeRequest}
         onChangeHandlerSort={onChangeRequest}
       ></TabNavForGallery>
       <div className="gallery-content">
         <GridBody
-          gridContent={scrollArray}
+          gridContent={historyGallery[counter]}
           handlerFav={handlerClickGalleryFav}
         ></GridBody>
         <div className="page-switch">
@@ -297,11 +260,7 @@ export default function Gallery() {
             onClick={handlerClickPrev}
           ></button>
           <button
-            className={
-              arrFromAPI && counter === Math.ceil(arrFromAPI.length / limit) - 1
-                ? "sw-next-dis"
-                : "sw-next"
-            }
+            className="sw-next"
             onClick={handlerClickNext}
           ></button>
         </div>
@@ -312,7 +271,7 @@ export default function Gallery() {
 
 export function GridBody({ gridContent, handlerFav }) {
   let gridItems;
-
+  console.log(gridContent)
   if (gridContent) {
     gridItems = gridContent.map((cat, index) => (
       <div
@@ -330,8 +289,10 @@ export function GridBody({ gridContent, handlerFav }) {
         ></button>
       </div>
     ));
-  }
-
+  // } else if(gridContent[0].length === 0){
+  //   gridItems = <div className="g-con-empty">None</div>
+    // }
+    console.log(gridContent)
   return (
     <div className="grid-body">
       {gridItems}
